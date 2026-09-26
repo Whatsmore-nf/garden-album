@@ -9,8 +9,8 @@ npm-debug.log*
 .DS_Store
 Thumbs.db
 
-# 大模型文件（超过 GitHub 100MB 单文件限制）
-resources/models/*.gguf
+# 模型文件不入库（体积大，且 resources/bin 下已有同名副本）
+resources/models/
 
 # 运行期产生的本地数据
 *.db
