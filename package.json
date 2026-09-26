@@ -1,0 +1,42 @@
+{
+  "name": "local-gallery",
+  "version": "0.1.0",
+  "description": "完全本地的对话式相册：MiniCPM-V 统一理解 + SQLite 统一检索",
+  "main": "dist/main/index.js",
+  "scripts": {
+    "postinstall": "electron-builder install-app-deps",
+    "build": "tsc -p tsconfig.json",
+    "start": "npm run build && electron .",
+    "dist": "npm run build && electron-builder"
+  },
+  "dependencies": {
+    "better-sqlite3": "^11.3.0",
+    "chokidar": "^3.6.0",
+    "exifreader": "^4.23.0",
+    "onnxruntime-node": "^1.19.2",
+    "sharp": "^0.33.5",
+    "sqlite-vec": "^0.1.6"
+  },
+  "devDependencies": {
+    "@types/better-sqlite3": "^7.6.11",
+    "@types/node": "^20.14.0",
+    "electron": "^31.3.0",
+    "electron-builder": "^24.13.3",
+    "typescript": "^5.5.4"
+  },
+  "build": {
+    "appId": "com.localgallery.app",
+    "productName": "LocalGallery",
+    "files": ["dist/**/*"],
+    "asarUnpack": [
+      "**/node_modules/sharp/**",
+      "**/node_modules/better-sqlite3/**",
+      "**/node_modules/onnxruntime-node/**",
+      "**/node_modules/sqlite-vec/**"
+    ],
+    "extraResources": [
+      { "from": "resources/bin", "to": "bin" },
+      { "from": "resources/models", "to": "models" }
+    ]
+  }
+}

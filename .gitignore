@@ -1,0 +1,19 @@
+node_modules/
+dist/
+out/
+release/
+
+*.log
+npm-debug.log*
+
+.DS_Store
+Thumbs.db
+
+# 大模型文件（超过 GitHub 100MB 单文件限制）
+resources/models/*.gguf
+
+# 运行期产生的本地数据
+*.db
+*.sqlite
+*.sqlite3
+data/

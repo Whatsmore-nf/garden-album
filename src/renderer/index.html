@@ -1,0 +1,63 @@
+<!doctype html>
+<html lang="zh">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="Content-Security-Policy"
+        content="default-src 'none'; script-src 'unsafe-inline'; style-src 'unsafe-inline'; img-src 'self' data:;">
+  <title>LocalGallery</title>
+  <style>
+    body { font-family: system-ui, sans-serif; margin: 24px; max-width: 900px; }
+    input { width: 360px; padding: 6px; }
+    button { padding: 6px 14px; margin-left: 8px; }
+    #status { color: #666; margin: 12px 0; }
+    .photo { padding: 4px 0; border-bottom: 1px solid #eee; font-size: 14px; }
+    .meta { color: #999; font-size: 12px; }
+  </style>
+</head>
+<body>
+  <h3>LocalGallery（演示页：仅示范后端 API 用法）</h3>
+  <div>
+    <input id="root" placeholder="照片目录绝对路径，如 /Users/me/Pictures">
+    <button onclick="doScan()">扫描</button>
+    <button onclick="doWatch()">监听变化</button>
+  </div>
+  <div style="margin-top: 12px">
+    <input id="q" placeholder='试试：“去年夏天 海边 红裙 笑得自然 没路人”'>
+    <button onclick="doSearch()">搜索</button>
+  </div>
+  <div id="status"></div>
+  <div id="results"></div>
+  <script>
+    const g = window.gallery;
+    function doScan() { g.scan(document.getElementById("root").value); }
+    function doWatch() { g.watch(document.getElementById("root").value); }
+    async function doSearch() {
+      const q = document.getElementById("q").value;
+      const r = await g.search(q);
+      const status = document.getElementById("status");
+      status.textContent =
+        `${r.photos.length} 张 · ${r.reranked ? "已语义精排" : "规则命中"}` +
+        `${r.widened ? " · 已放宽匹配" : ""}` +
+        `${r.plan.time ? ` · 时间窗口：${r.plan.time.label}` : ""}`;
+      const el = document.getElementById("results");
+      el.innerHTML = "";
+      for (const p of r.photos.slice(0, 100)) {
+        const d = document.createElement("div");
+        d.className = "photo";
+        const when = p.taken_at ? new Date(p.taken_at).toLocaleString() : "未知时间";
+        d.innerHTML =
+          `<div>${p.path ?? ""}</div>` +
+          `<div class="meta">${when}${p.ai_caption ? " · " + p.ai_caption : ""}` +
+          `${p._rerank != null ? " · 精排分 " + p._rerank : ""}</div>`;
+        el.appendChild(d);
+      }
+    }
+    if (g?.onIngestProgress) {
+      g.onIngestProgress(d => {
+        document.getElementById("status").textContent =
+          d.busy ? `索引中… 剩余 ${d.pending}（当前：${d.current ?? ""}）` : "索引空闲";
+      });
+    }
+  </script>
+</body>
+</html>
